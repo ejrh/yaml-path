@@ -1,0 +1,166 @@
+---
+aliases:
+  - &aliasAnchorOne Anchored Scalar Value
+  - &aliasAnchorTwo Hey, Number Two!
+array_of_hashes: &arrayOfHashes
+  - step: 1
+    name: one
+  - step: 2
+    name: two
+rollback_hashes:
+  on_condition:
+    failure:
+      - step: 3
+        name: three
+      - step: 4
+        name: four
+disabled_steps:
+  - 2
+  - 3
+squads:
+  alpha: 1.1
+  bravo: 2.2
+  charlie: 3.3
+  delta: 4.4
+number_keys:
+  1: one
+  2: two
+  3: three
+
+# For traversal tests:
+name: Name 0-0
+lots_of_names:
+  name: Name 1-1
+  tier1:
+    name: Name 2-1
+    tier2:
+      name: Name 3-1
+      list_of_named_objects:
+        - name: Name 4-1
+          tag: Tag 4-1
+          other: Other 4-1
+          dude: Dude 4-1
+        - tag: Tag 4-2
+          name: Name 4-2
+          dude: Dude 4-2
+          other: Other 4-2
+        - other: Other 4-3
+          dude: Dude 4-3
+          tag: Tag 4-3
+          name: Name 4-3
+        - dude: Dude 4-4
+          tag: Tag 4-4
+          name: Name 4-4
+          other: Other 4-4
+
+###############################################################################
+# For descendent searching:
+products_hash:
+  doodad:
+    availability:
+      start:
+        date: 2020-10-10
+        time: 08:00
+      stop:
+        date: 2020-10-29
+        time: 17:00
+    dimensions:
+      width: 5
+      height: 5
+      depth: 5
+      weight: 10
+  doohickey:
+    availability:
+      start:
+        date: 2020-08-01
+        time: 10:00
+      stop:
+        date: 2020-09-25
+        time: 10:00
+    dimensions:
+      width: 1
+      height: 2
+      depth: 3
+      weight: 4
+  widget:
+    availability:
+      start:
+        date: 2020-01-01
+        time: 12:00
+      stop:
+        date: 2020-01-01
+        time: 16:00
+    dimensions:
+      width: 9
+      height: 10
+      depth: 1
+      weight: 4
+products_array:
+  - product: doodad
+    availability:
+      start:
+        date: 2020-10-10
+        time: 08:00
+      stop:
+        date: 2020-10-29
+        time: 17:00
+    dimensions:
+      width: 5
+      height: 5
+      depth: 5
+      weight: 10
+  - product: doohickey
+    availability:
+      start:
+        date: 2020-08-01
+        time: 10:00
+      stop:
+        date: 2020-09-25
+        time: 10:00
+    dimensions:
+      width: 1
+      height: 2
+      depth: 3
+      weight: 4
+  - product: widget
+    availability:
+      start:
+        date: 2020-01-01
+        time: 12:00
+      stop:
+        date: 2020-01-01
+        time: 16:00
+    dimensions:
+      width: 9
+      height: 10
+      depth: 1
+      weight: 4
+
+###############################################################################
+# For wildcard matching (#154)
+Locations:
+  United States:
+    New York: ny
+    Boston: bstn
+  Canada: cnd
+
+AoH_Locations:
+  - United States: us
+    New York:
+      New York City: nyc
+    Massachussets:
+      Boston: bo
+  - Canada: ca
+
+# Weird Array-of-Hashes
+Weird_AoH_Locations:
+  - United States:
+      New York: nyc
+      Boston: bstn
+  - Canada: cnd
+
+Set_Locations:
+  United States: !!set
+    ? New York
+    ? Boston
+  Canada:
