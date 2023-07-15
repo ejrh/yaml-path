@@ -31,4 +31,5 @@ jobs:
     - name: Run rust-clippy
       run:
         cargo clippy
+        --all-targets
         --all-features
