@@ -5,7 +5,7 @@ use yaml_path::{Path, Processor};
 fn test_simple() {
     let docs = YamlLoader::load_from_str("hello: there").unwrap();
     let doc = &docs[0];
-    let processor = Processor::new(&doc);
+    let processor = Processor::new(doc);
     let path = Path::new("hello").unwrap();
     let results = processor.get_all(&path).unwrap();
     assert_eq!(results.len(), 1);

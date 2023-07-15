@@ -15,17 +15,17 @@ fn get_test_data() -> Result<Vec<Yaml>, Box<dyn Error>> {
     Ok(YamlLoader::load_from_str(&yaml_str)?)
 }
 
-#[test_case("/number_keys/1", &[&"one"], true, None)]
-#[test_case("/squads/alpha", &[&"1.1"], true, None)]
-#[test_case("squads.bravo", &[&"2.2"], true, None)]
-#[test_case("/array_of_hashes/1", &[&"step: 2\nname: two"], true, None)]
-fn test_get_nodes(yamlpath: &str, results: &[&str], mustexist: bool, default: Option<&str>) -> Result<(), Box<dyn Error>> {
-    let yamlpath = Path::new(&yamlpath)?;
+#[test_case("/number_keys/1", &["one"], true, None)]
+#[test_case("/squads/alpha", &["1.1"], true, None)]
+#[test_case("squads.bravo", &["2.2"], true, None)]
+#[test_case("/array_of_hashes/1", &["step: 2\nname: two"], true, None)]
+fn test_get_nodes(yamlpath: &str, results: &[&str], _mustexist: bool, _default: Option<&str>) -> Result<(), Box<dyn Error>> {
+    let yamlpath = Path::new(yamlpath)?;
 
     let data = get_test_data()?;
     let first = &data[0];
 
-    let processor = Processor::new(&first);
+    let processor = Processor::new(first);
     let mut count = 0;
     for (idx, node) in processor.get_all(&yamlpath)?.into_iter().enumerate() {
         let mut node_as_str = String::new();
