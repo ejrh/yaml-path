@@ -1,3 +1,5 @@
+use std::str::FromStr;
+use yaml_rust::Yaml;
 use crate::PathError;
 use crate::segment::Segment;
 
@@ -19,7 +21,10 @@ impl Path {
         let mut segments = Vec::new();
         let path_str = path_str.strip_prefix('/').unwrap_or(path_str);
         for part in path_str.split('/') {
-            segments.push(Segment::Key(String::from(part)));
+            let key = i64::from_str(part)
+                .map(Yaml::Integer)
+                .unwrap_or_else(|_| Yaml::String(String::from(part)));
+            segments.push(Segment::Key(key));
         }
         Ok(Path {
             separator,
