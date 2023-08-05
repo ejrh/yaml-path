@@ -1,11 +1,15 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum PathError {
     ParseError,
     NotAHash,
-    NotAnIndex
+    NotAnIndex,
+    TooManyNodes,
+    NodeNotFound,
+    NotAString,
+    NotAnInteger,
 }
 
 impl Display for PathError {

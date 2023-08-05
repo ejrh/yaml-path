@@ -10,6 +10,7 @@ pub(crate) enum Separator {
     Dot
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Path {
     separator: Separator,
     original: String,
@@ -36,10 +37,14 @@ impl Path {
         let mut segments = Vec::new();
         let path_str = path_str.strip_prefix('/').unwrap_or(path_str);
         for part in path_str.split(separator.symbol()) {
-            let key = i64::from_str(part)
-                .map(Yaml::Integer)
-                .unwrap_or_else(|_| Yaml::String(String::from(part)));
-            segments.push(Segment::Key(key));
+            if part == "*" {
+                segments.push(Segment::Wildcard);
+            } else {
+                let key = i64::from_str(part)
+                    .map(Yaml::Integer)
+                    .unwrap_or_else(|_| Yaml::String(String::from(part)));
+                segments.push(Segment::Key(key));
+            }
         }
         Ok(Path {
             separator,
@@ -51,6 +56,7 @@ impl Path {
 
 #[cfg(test)]
 mod test {
+    use crate::PathError::ParseError;
     use super::*;
 
     #[test]
@@ -60,5 +66,25 @@ mod test {
         assert_eq!(Separator::Slash, detect_separator("/"));
         assert_eq!(Separator::Slash, detect_separator("/key1"));
         assert_eq!(Separator::Dot, detect_separator("key1/key2"));
+    }
+
+    #[test]
+    fn test_bad_path_separators() {
+        //assert_eq!(Err(ParseError), Path::new(""));
+        //assert_eq!(Err(ParseError), Path::new("/"));
+        //assert_eq!(Err(ParseError), Path::new("."));
+        //assert_eq!(Err(ParseError), Path::new("foo/bar"));
+        //assert_eq!(Err(ParseError), Path::new("/foo.bar"));
+        //assert_eq!(Err(ParseError), Path::new("foo.bar/baz"));
+    }
+
+    #[test]
+    fn test_parse() {
+        let path = Path::new("/1/*/b").unwrap();
+        let mut iter = path.segments.iter();
+        assert_eq!(Some(&Segment::Key(Yaml::Integer(1))), iter.next());
+        assert_eq!(Some(&Segment::Wildcard), iter.next());
+        assert_eq!(Some(&Segment::Key(Yaml::String(String::from("b")))), iter.next());
+        assert_eq!(None, iter.next());
     }
 }
