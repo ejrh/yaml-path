@@ -1,3 +1,7 @@
+[![Rust build](https://github.com/ejrh/yaml-path/actions/workflows/rust-build.yml/badge.svg)](https://github.com/ejrh/yaml-path/actions/workflows/rust-build.yml)
+[![Rust tests](https://github.com/ejrh/yaml-path/actions/workflows/rust-tests.yml/badge.svg)](https://github.com/ejrh/yaml-path/actions/workflows/rust-tests.yml)
+[![Rust Clippy](https://github.com/ejrh/yaml-path/actions/workflows/rust-clippy.yml/badge.svg)](https://github.com/ejrh/yaml-path/actions/workflows/rust-clippy.yml)
+
 `yaml-path` is a Rust implementation of the [YAML Path specification][yaml-path-spec].
 It builds on the YAML implementation provided by the Pure-rust [yaml-rust][yaml-rust-crate] crate.
 
