@@ -17,6 +17,14 @@ pub struct Path {
     pub(crate) segments: Vec<Segment>
 }
 
+impl FromStr for Path {
+    type Err = PathError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Path::new(s)
+    }
+}
+
 pub(crate) fn detect_separator(path_str: &str) -> Separator {
     if path_str.starts_with('/') { Separator::Slash } else { Separator::Dot }
 }
@@ -33,6 +41,7 @@ impl Separator {
 
 impl Path {
     pub fn new(path_str: &str) -> Result<Path, PathError> {
+        let original = String::from(path_str);
         let separator = detect_separator(path_str);
         let mut segments = Vec::new();
         let path_str = path_str.strip_prefix('/').unwrap_or(path_str);
@@ -48,7 +57,7 @@ impl Path {
         }
         Ok(Path {
             separator,
-            original: String::from(path_str),
+            original,
             segments
         })
     }
@@ -86,5 +95,11 @@ mod test {
         assert_eq!(Some(&Segment::Wildcard), iter.next());
         assert_eq!(Some(&Segment::Key(Yaml::String(String::from("b")))), iter.next());
         assert_eq!(None, iter.next());
+    }
+
+    #[test]
+    fn test_fromstr_parse() {
+        let path: Path = "/hello".parse().unwrap();
+        assert_eq!("/hello", path.original);
     }
 }
