@@ -61,6 +61,30 @@ impl Path {
             segments
         })
     }
+
+    pub fn get_all<'a>(&self, doc: &'a Yaml) -> Result<Vec<&'a Yaml>, PathError> {
+        let mut roots = Vec::from([doc]);
+        for seg in &self.segments {
+            let mut new_roots = Vec::new();
+            for r in roots {
+                let mut new_r = seg.evaluate(r)?;
+                new_roots.append(&mut new_r);
+            }
+            roots = new_roots;
+        }
+        Ok(roots)
+    }
+
+    pub fn get_one<'a>(&self, doc: &'a Yaml) -> Result<&'a Yaml, PathError> {
+        let results = self.get_all(doc)?;
+        if results.is_empty() {
+            return Err(PathError::NodeNotFound);
+        }
+        if results.len() > 1 {
+            return Err(PathError::TooManyNodes);
+        }
+        Ok(results[0])
+    }
 }
 
 #[cfg(test)]

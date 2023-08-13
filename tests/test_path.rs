@@ -5,12 +5,12 @@ use std::path::PathBuf;
 
 use test_case::test_case;
 use yaml_rust::{Yaml, YamlEmitter, YamlLoader};
-use yaml_path::{Path, Processor};
+use yaml_path::Path;
 
 fn get_test_data() -> Result<Vec<Yaml>, Box<dyn Error>> {
     let manifest_dir = env::var("CARGO_MANIFEST_DIR")?;
     let mut path = PathBuf::from(manifest_dir);
-    path.push("tests/test_processor.yaml");
+    path.push("tests/test_path.yaml");
     let yaml_str = read_to_string(path)?;
     Ok(YamlLoader::load_from_str(&yaml_str)?)
 }
@@ -67,9 +67,8 @@ fn test_get_nodes(yamlpath: &str, results: &[&str], _mustexist: bool, _default: 
     let data = get_test_data()?;
     let first = &data[0];
 
-    let processor = Processor::new(first);
     let mut count = 0;
-    for (idx, node) in processor.get_all(&yamlpath)?.into_iter().enumerate() {
+    for (idx, node) in yamlpath.get_all(&first)?.into_iter().enumerate() {
         let mut node_as_str = String::new();
         let mut emitter = YamlEmitter::new(&mut node_as_str);
         emitter.dump(node)?;
