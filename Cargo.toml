@@ -3,6 +3,12 @@ name = "yaml-path"
 version = "0.1.0"
 edition = "2021"
 
+# Stuff for crates.io:
+description = "Pure Rust implementation of YAML Path"
+license = "MIT"
+repository = "https://github.com/ejrh/yaml-path/"
+keywords = ["yaml"]
+
 [dependencies]
 yaml-rust = "0.4.5"
 
