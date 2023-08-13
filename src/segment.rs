@@ -1,7 +1,7 @@
 use yaml_rust::Yaml;
 
 use crate::PathError;
-use crate::PathError::{NotAHash, NotAnIndex};
+use crate::PathError::{NodeNotFound, NotAHash, NotAnIndex};
 use crate::segment::Segment::*;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -30,7 +30,8 @@ impl Segment {
         } else {
             let Some(hash) = root.as_hash() else { return Err(NotAHash) };
             //println!("hash lookup key {:?}", key);
-            hash.get(key).unwrap()
+            let Some(val) = hash.get(key) else { return Err(NodeNotFound) };
+            val
         };
         let results = Vec::from([value]);
         Ok(results)
@@ -43,5 +44,40 @@ impl Segment {
             _ => { return Err(PathError::NotAHash); }
         };
         Ok(results)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    use yaml_rust::YamlLoader;
+
+    #[test]
+    fn test_hash_key() {
+        let doc = YamlLoader::load_from_str("a: 1\ntest: 42\n19: nineteen").unwrap();
+        let seg = Segment::Key(Yaml::String(String::from("absent")));
+        let res = seg.evaluate(&doc[0]);
+        assert_eq!(Err(NodeNotFound), res);
+
+        let seg = Segment::Key(Yaml::String(String::from("test")));
+        let res = seg.evaluate(&doc[0]);
+        assert_eq!(Ok(Vec::from([&Yaml::Integer(42)])), res);
+
+        let seg = Segment::Key(Yaml::Integer(19));
+        let res = seg.evaluate(&doc[0]);
+        assert_eq!(Ok(Vec::from([&Yaml::String(String::from("nineteen"))])), res);
+    }
+
+    #[test]
+    fn test_wildcard() {
+        let doc = YamlLoader::load_from_str("a: 1\ntest: 42\n19: nineteen").unwrap();
+        let seg = Segment::Wildcard;
+        let res = seg.evaluate(&doc[0]).unwrap();
+        let mut iter = res.into_iter();
+        assert_eq!(Some(&Yaml::Integer(1)), iter.next());
+        assert_eq!(Some(&Yaml::Integer(42)), iter.next());
+        assert_eq!(Some(&Yaml::String(String::from("nineteen"))), iter.next());
+        assert_eq!(None, iter.next());
     }
 }
