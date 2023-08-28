@@ -39,8 +39,8 @@ impl Segment {
 
     fn evaluate_wildcard<'a>(&self, root: &'a Yaml) -> Result<Vec<&'a Yaml>, PathError> {
         let results = match root {
-            Yaml::Array(arr) => arr.iter().map(|y| y).collect(),
-            Yaml::Hash(hash) => hash.values().map(|y| y).collect(),
+            Yaml::Array(arr) => arr.iter().collect(),
+            Yaml::Hash(hash) => hash.values().collect(),
             _ => { return Err(PathError::NotAHash); }
         };
         Ok(results)
